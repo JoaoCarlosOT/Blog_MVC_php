@@ -2,6 +2,7 @@
 
 require_once '../models/User.php';
 
+
 class UserController
 {
     public function create()
@@ -9,11 +10,13 @@ class UserController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = $_POST['nome'];
             $email = $_POST['email'];
+            $password = $_POST['senha'];
+            $senha = password_hash($password, PASSWORD_DEFAULT);
 
-            if (!empty($username) && !empty($email)) {
+            if (!empty($username) && !empty($email) && !empty($senha)) {
                 $userModel = new User();
-                if ($userModel->create($username, $email)) {
-                    header('Location: ../public/index.php?action=read');
+                if ($userModel->create($username, $email, $senha)) {
+                    header('Location: ../views/login.php');
                     exit();
                 } else {
                     echo 'Erro ao criar usuário!';
@@ -22,7 +25,44 @@ class UserController
                 echo 'Todos os campos são obrigatórios!';
             }
         }
-        require_once '../views/create.php';
+        require_once '../views/cadastro.php';
+    }
+
+    public function login()
+    {
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'];
+            $password = $_POST['senha'];
+
+            if (empty($email) || empty($password)) {
+                echo 'O campo usuário/senha não foi preenchido!';
+                header('Location: ../views/login.php');
+                exit();
+            }
+
+            $userModel = new User();
+            $user = $userModel->login($email, $password);
+            if ($user) {
+                $_SESSION['user_id'] = $user['id'];
+                header('Location: ../public/index.php?action=read');
+                exit();
+            } else {
+                echo 'Dados inválidos!';
+                header('Location: ../views/login.php');
+                exit();
+            }
+        } else {
+            require_once '../views/login.php';
+        }
+    }
+
+    public function logout()
+    {
+       // session_start();
+        session_unset();
+        session_destroy();
+        header('Location: ../public/index.php?action=login');
     }
 
     public function read()
