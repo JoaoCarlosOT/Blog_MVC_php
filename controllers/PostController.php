@@ -2,6 +2,7 @@
 
 require_once '../models/Posts.php';
 require_once 'BaseController.php';
+require_once '../utils/FlashMessage.php';
 
 class PostController extends BaseController
 {
@@ -11,21 +12,26 @@ class PostController extends BaseController
     $this->checkAuthentication();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $titulo = $_POST['titulo'];
+        $titulo = addslashes($_POST['titulo']);
         $data = date('Y-m-d H:i:s');
-        $categoria = $_POST['categoria'];
-        $descricao = $_POST['descricao'];
+        $categoria = addslashes($_POST['categoria']);
+        $descricao = addslashes($_POST['descricao']);
+        $flashMessage = new FlashMessage();
 
         if (!empty($titulo) && !empty($data) && !empty($categoria) && !empty($descricao)) {
             $postModel = new Posts();
             if ($postModel->create($titulo, $data, $categoria, $descricao)) {
+                //$_SESSION['mensagem'] = "Post criado com sucesso!";
+                $flashMessage->setMessage("Post criado com sucesso!");
                 header('Location: ../public/index.php?action=read');
                 exit();
             } else {
-                echo 'Erro ao criar Post!';
+                //$_SESSION['mensagem'] = "Erro ao criar Post!";
+                $flashMessage->setMessage("Erro ao criar Post!");
             }
         } else {
-            echo 'Todos os campos são obrigatórios!';
+            //$_SESSION['mensagem'] = "Todos os campos são obrigatórios!";
+            $flashMessage->setMessage("Todos os campos são obrigatórios!");
         }
     }
     require_once '../views/create.php';
@@ -53,7 +59,7 @@ class PostController extends BaseController
         $this->checkAuthentication();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $pesquisa = $_POST['search'];
+            $pesquisa = addslashes($_POST['search']);
             $postsModel = new Posts();
             $posts = $postsModel->search($pesquisa);
             
@@ -71,22 +77,27 @@ class PostController extends BaseController
         $this->checkAuthentication();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['id'];
-            $titulo = $_POST['titulo'];
+            $id = addslashes($_POST['id']);
+            $titulo = addslashes($_POST['titulo']);
             $data = date('Y-m-d H:i:s');
-            $categoria = $_POST['categoria'];
-            $descricao = $_POST['descricao'];
+            $categoria = addslashes($_POST['categoria']);
+            $descricao = addslashes($_POST['descricao']);
+            $flashMessage = new FlashMessage();
 
             if (!empty($id) && !empty($titulo) && !empty($data) && !empty($categoria) && !empty($descricao)) {
                 $postsModel = new Posts();
                 if ($postsModel->update($id, $titulo, $data, $categoria, $descricao)) {
+                    //$_SESSION['mensagem'] = "Post editado com sucesso!";
+                    $flashMessage->setMessage("Post editado com sucesso!");
                     header('Location: ../public/index.php?action=read');
                     exit();
                 } else {
-                    echo 'Erro ao atualizar usuário!';
+                    //$_SESSION['mensagem'] = "Erro ao atualizar usuário!";
+                    $flashMessage->setMessage("Erro ao atualizar usuário!");
                 }
             } else {
-                echo 'Todos os campos são obrigatórios!';
+                //$_SESSION['mensagem'] = "Todos os campos são obrigatórios!";
+                $flashMessage->setMessage("Todos os campos são obrigatórios!");
             }
         } 
     }
@@ -96,13 +107,18 @@ class PostController extends BaseController
         $this->checkAuthentication();
 
         if (isset($_GET['id'])) {
-            $id = $_GET['id'];
+            $id = addslashes($_GET['id']);
             $postsModel = new Posts();
+            $flashMessage = new FlashMessage();
             if ($postsModel->delete($id)) {
+                //$_SESSION['mensagem'] = "Post deletado com sucesso!";
+                $flashMessage->setMessage("Post deletado com sucesso!");
                 header('Location: ../public/index.php?action=read');
                 exit();
             } else {
-                echo 'Erro ao deletar usuário!';
+                //$_SESSION['mensagem'] = "Erro ao deletar usuário!";
+                $flashMessage->setMessage("Erro ao deletar usuário!");
+                header('Location: ../public/index.php?action=read');
             }
         }
     }

@@ -5,6 +5,14 @@ $verify = new BaseController;
 $verify->checkAuthentication();
 
 ?>
+
+<?php
+require_once '../utils/FlashMessage.php';
+
+$flashMessage = new FlashMessage();
+$flashMessage->ShowMessage();
+?>
+
 <form method="POST" action="../public/index.php?action=create">
     <label for="title">titulo:</label>
     <input type="text" name="titulo" id="nome" required>

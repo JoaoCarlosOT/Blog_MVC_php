@@ -1,4 +1,9 @@
+<?php
+require_once '../utils/FlashMessage.php';
 
+$flashMessage = new FlashMessage();
+$flashMessage->ShowMessage();
+?>
 <h1>Cadastro</h1>
 <form method="POST" action="../public/index.php?action=cadastrar">
     <label for="nome">Username:</label>

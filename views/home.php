@@ -30,9 +30,14 @@ $verify->checkAuthentication();
         <button type="submit">Pesquisar</button>
     </form>
     </div><br>
-
+   
     <a href="../views/create.php">Criar Post</a><br>
-    
+    <?php
+        require_once '../utils/FlashMessage.php';
+
+        $flashMessage = new FlashMessage();
+        $flashMessage->ShowMessage();
+    ?>
     <tr>
         <th>titulo</th>
         <th>descrição</th>

@@ -1,28 +1,32 @@
 <?php
 
 require_once '../models/User.php';
-
+require_once '../helpers/EmailHelper.php';
+require_once '../utils/FlashMessage.php';
 
 class UserController
 {
     public function create()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['nome'];
-            $email = $_POST['email'];
-            $password = $_POST['senha'];
+            $username = addslashes($_POST['nome']);
+            $email = addslashes($_POST['email']);
+            $password = addslashes($_POST['senha']);
             $senha = password_hash($password, PASSWORD_DEFAULT);
+            $flashMessage = new FlashMessage();
 
             if (!empty($username) && !empty($email) && !empty($senha)) {
                 $userModel = new User();
                 if ($userModel->create($username, $email, $senha)) {
+                    $sendEmail = new Email();
+                    $sendEmail->SendEmail($username, $email);
                     header('Location: ../views/login.php');
                     exit();
                 } else {
-                    echo 'Erro ao criar usuário!';
+                    $_SESSION['mensagem'] = "Erro ao criar usuário!";
                 }
             } else {
-                echo 'Todos os campos são obrigatórios!';
+                $_SESSION['mensagem'] = "Todos os campos são obrigatórios!";
             }
         }
         require_once '../views/cadastro.php';
@@ -32,11 +36,12 @@ class UserController
     {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'];
-            $password = $_POST['senha'];
+            $email = addslashes($_POST['email']);
+            $password = addslashes($_POST['senha']);
+            $flashMessage = new FlashMessage();
 
             if (empty($email) || empty($password)) {
-                echo 'O campo usuário/senha não foi preenchido!';
+                $_SESSION['mensagem'] = "O campo usuário/senha não foi preenchido!";
                 header('Location: ../views/login.php');
                 exit();
             }
@@ -48,7 +53,7 @@ class UserController
                 header('Location: ../public/index.php?action=read');
                 exit();
             } else {
-                echo 'Dados inválidos!';
+                $_SESSION['mensagem'] = "Dados inválidos!";
                 header('Location: ../views/login.php');
                 exit();
             }
@@ -75,9 +80,10 @@ class UserController
     public function update()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['id'];
-            $username = $_POST['nome'];
-            $email = $_POST['email'];
+            $id = addslashes($_POST['id']);
+            $username = addslashes($_POST['nome']);
+            $email = addslashes($_POST['email']);
+            $flashMessage = new FlashMessage();
 
             if (!empty($id) && !empty($username) && !empty($email)) {
                 $userModel = new User();
@@ -85,10 +91,10 @@ class UserController
                     header('Location: ../public/index.php?action=read');
                     exit();
                 } else {
-                    echo 'Erro ao atualizar usuário!';
+                    $_SESSION['mensagem'] = "Erro ao atualizar usuário!";
                 }
             } else {
-                echo 'Todos os campos são obrigatórios!';
+                $_SESSION['mensagem'] = "Todos os campos são obrigatórios!";
             }
         } 
     }
@@ -97,12 +103,13 @@ class UserController
     {
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
+            $flashMessage = new FlashMessage();
             $userModel = new User();
             if ($userModel->delete($id)) {
                 header('Location: ../public/index.php?action=read');
                 exit();
             } else {
-                echo 'Erro ao deletar usuário!';
+                $_SESSION['mensagem'] = "Erro ao deletar usuário!";
             }
         }
     }

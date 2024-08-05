@@ -1,3 +1,9 @@
+<?php
+require_once '../utils/FlashMessage.php';
+
+$flashMessage = new FlashMessage();
+$flashMessage->ShowMessage();
+?>
 <h1>Login</h1>
 <form method="POST" action="../public/index.php?action=login">
     <label for="email">Email:</label>

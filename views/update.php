@@ -5,6 +5,14 @@ $verify = new BaseController;
 $verify->checkAuthentication();
 
 ?>
+
+<?php
+require_once '../utils/FlashMessage.php';
+
+$flashMessage = new FlashMessage();
+$flashMessage->ShowMessage();
+?>
+
 <form method="POST" action="../public/index.php?action=update">
     <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
 

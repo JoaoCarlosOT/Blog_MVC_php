@@ -2,7 +2,7 @@
     "name": "kayqu/mvc",
     "autoload": {
         "psr-4": {
-            "Kayqu\\Mvc\\": "MVC/"
+            "Mvc\\": "MVC/"
         }
     },
     "authors": [
@@ -11,5 +11,7 @@
             "email": "joaocarlosdev403@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "phpmailer/phpmailer": "^6.9"
+    }
 }
